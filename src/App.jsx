@@ -74,7 +74,9 @@ const App = () => {
       <main>
         {activeTab === "home" && <Home data={dbData} />}
         {activeTab === "projects" && <Projects data={dbData} />}
-        {/* Pass your clean SQL table rows down to other view components here */}
+        {activeTab === "contributors" && <Contributors data={dbData} />}
+        {activeTab === "blog" && <Blog data={dbData} />}
+
       </main>
     </div>
   );

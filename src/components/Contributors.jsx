@@ -1,5 +1,6 @@
 
 // ===== Contributors.jsx — wizards, horizontal card showcase, minimal =====
+import React from 'react';
 
 const Contributors = ({ data }) => {
   const [active, setActive] = React.useState(0);
@@ -207,6 +208,7 @@ const WizardGlyph = ({ seed, active }) => {
 
 const WizardDetail = ({ wizard }) => {
   const w = wizard;
+
   return (
     <div key={w.handle} className="wizard-detail page">
       <div className="wizard-detail-meta mono">
@@ -223,7 +225,7 @@ const WizardDetail = ({ wizard }) => {
       <p className="wizard-detail-bio">{w.bio}</p>
 
       <div className="wizard-detail-badges mono">
-        {w.badges.map(b => (
+        {w.badges.split(',').map(b => (
           <span key={b} className="badge">[ {b} ]</span>
         ))}
       </div>
