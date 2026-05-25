@@ -1,51 +1,67 @@
-// ===== App.jsx =====
-
 import React, { useState, useEffect } from 'react';
+import initSqlJs from 'sql.js';
 import Nav from './components/Nav';
 import Home from './components/Home';
 
-// 1. Import your brand new boilerplate data
-import { SHIRE_DATA } from './data.jsx'; 
-
-const Quests = ({ data }) => <div className="container mono" style={{ padding: 40 }}>Tracking {data.length} active quests...</div>;
-const Wizards = ({ data }) => <div className="container mono" style={{ padding: 40 }}>{data.length} wizards online.</div>;
-const Grimoire = ({ data }) => <div className="container mono" style={{ padding: 40 }}>{data.length} notes recorded.</div>;
+// Dynamic local path mapping for production and development tracking
+const wasmConfig = {
+  locateFile: file => `${import.meta.env.BASE_URL}${file}`
+};
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("home");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [dbData, setDbData] = useState({ contributors: [], projects: [], posts: [] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = isDarkMode ? "dark" : "light";
-  }, [isDarkMode]);
+    async function loadDatabase() {
+      try {
+        // Fetch the raw database binary from your local assets path
+        const response = await fetch(`${import.meta.env.BASE_URL}shire.db`);
+        const buf = await response.arrayBuffer();
+        
+        // Initialize the local WASM compiler instance
+        const SQL = await initSqlJs(wasmConfig);
+        const db = new SQL.Database(new Uint8Array(buf));
 
-  const handleTabChange = (tabId) => {
-    setActiveTab(tabId);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+        // Execute raw SQL statements natively inside the client window browser
+        const contributorsResult = db.exec("SELECT * FROM contributors");
+        const projectsResult = db.exec("SELECT * FROM projects");
+        const postsResult = db.exec("SELECT * FROM posts");
+
+        const parseRows = (result) => {
+          if (!result.length) return [];
+          const columns = result[0].columns;
+          return result[0].values.map(row => 
+            columns.reduce((obj, col, i) => ({ ...obj, [col]: row[i] }), {})
+          );
+        };
+
+        setDbData({
+          contributors: parseRows(contributorsResult),
+          projects: parseRows(projectsResult),
+          posts: parseRows(postsResult)
+        });
+        setLoading(false);
+      } catch (err) {
+        console.error("Local SQLite compilation halted:", err);
+        setLoading(false);
+      }
+    }
+    loadDatabase();
+  }, []);
+
+  if (loading) {
+    return <div className="container mono" style={{ padding: 40 }}>$ reading local database cells...</div>;
+  }
 
   return (
-    <div className="app" data-screen-label={activeTab}>
-      <Nav 
-        active={activeTab} 
-        onChange={handleTabChange} 
-        theme={isDarkMode ? "dark" : "light"} 
-        onToggleTheme={() => setIsDarkMode(!isDarkMode)} 
-      />
-
+    <div className="app">
+      <Nav active={activeTab} onChange={setActiveTab} />
       <main>
-        {/* 2. Pass the specific data slices down to your views */}
-        {activeTab === "home" && <Home onGo={handleTabChange} data={SHIRE_DATA} />}
-        {activeTab === "projects" && <Quests data={SHIRE_DATA.projects} />}
-        {activeTab === "contributors" && <Wizards data={SHIRE_DATA.contributors} />}
-        {activeTab === "blog" && <Grimoire data={SHIRE_DATA.posts} />}
+        {activeTab === "home" && <Home data={dbData} />}
+        {/* Pass your clean SQL table rows down to other view components here */}
       </main>
-
-      <footer className="footer">
-        <div className="container footer-inner">
-          <div className="mono">~ $ <span>the-shire</span> — a small portal</div>
-        </div>
-      </footer>
     </div>
   );
 };
