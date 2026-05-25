@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
+
+// Load Data
 import initSqlJs from 'sql.js';
+
+// Load Components
 import Nav from './components/Nav';
 import Home from './components/Home';
+import Blog from './components/Blog';
+import Contributors from './components/Contributors';
+import Projects from './components/Projects';
+
 
 // Dynamic local path mapping for production and development tracking
 const wasmConfig = {
@@ -30,11 +38,16 @@ const App = () => {
         const postsResult = db.exec("SELECT * FROM posts");
 
         const parseRows = (result) => {
-          if (!result.length) return [];
-          const columns = result[0].columns;
-          return result[0].values.map(row => 
-            columns.reduce((obj, col, i) => ({ ...obj, [col]: row[i] }), {})
-          );
+          if (!result || !result.length) return [];
+          const columns = result[0].columns; // ["title", "tagline", ...]
+          const values = result[0].values;   // [["Lantern", "..."], ["Hearth", "..."]]
+          
+          return values.map(row => {
+            return columns.reduce((obj, col, index) => {
+              obj[col] = row[index];
+              return obj;
+            }, {});
+          });
         };
 
         setDbData({
@@ -60,6 +73,7 @@ const App = () => {
       <Nav active={activeTab} onChange={setActiveTab} />
       <main>
         {activeTab === "home" && <Home data={dbData} />}
+        {activeTab === "projects" && <Projects data={dbData} />}
         {/* Pass your clean SQL table rows down to other view components here */}
       </main>
     </div>
