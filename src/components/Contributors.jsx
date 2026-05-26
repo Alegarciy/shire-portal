@@ -1,10 +1,18 @@
 // ===== Contributors.jsx — wizards, ultra-minimal =====
 import React from 'react';
+import { GitHubCalendar } from 'react-github-calendar';
 
 const Contributors = ({ data }) => {
   const [active, setActive] = React.useState(0);
   const list = data.contributors;
   const w = list[active];
+  const orangeColors = [
+    '#ece8e0', // L0  no activity — warm rule, barely there
+    '#ead6c4', // L1  palest dusty clay
+    '#d8a98a', // L2  faded terracotta
+    '#b6694a', // L3  warm brick
+    '#8a3a1a', // L4  deep brick — matches --accent
+  ];
 
   return (
     <>
@@ -54,20 +62,18 @@ const Contributors = ({ data }) => {
                 <dt>location</dt>
                 <dd>{w.location}</dd>
               </div>
-              <div>
-                <dt>commits</dt>
-                <dd>{w.commits}</dd>
-              </div>
-              <div>
-                <dt>repos</dt>
-                <dd>{w.repos}</dd>
-              </div>
+              {/* <div> */}
+              {/*   <dt>commits</dt> */}
+              {/* </div> */}
+              {/* <div> */}
+              {/*   <dt>repos</dt> */}
+              {/*   <dd>{w.repos}</dd> */}
+              {/* </div> */}
               <div>
                 <dt>tags</dt>
                 <dd>{w.badges.split(',').map(b => b.toLowerCase()).join(", ")}</dd>
               </div>
             </dl>
-
             <a
               href={`https://github.com/${w.handle}`}
               target="_blank"
@@ -78,6 +84,35 @@ const Contributors = ({ data }) => {
               visit on github <span>→</span>
             </a>
           </article>
+          <br></br>
+          {/* <GitHubCalendar username="Alegarciy"/> */}
+          <div style={{ fontFamily: 'monospace' }}>
+            <GitHubCalendar 
+              username={w.handle} // Saw your handle in the image!
+              blockSize={8}     // Adjust the overall size of the squares
+              blockMargin={1}    // Increasing this makes it look "less crowded"
+              showMonthLabels={false}
+              showColorLegend={false}
+              theme={{
+                // We pass the colors to the theme so the tooltip/underlying logic knows about them
+                light: orangeColors,
+                dark: orangeColors,
+              }}
+              renderBlock={(block, activity) => {
+                // Here we intercept every single square (SVG <rect>) before it hits the screen
+                return React.cloneElement(block, {
+                  ...block.props,
+                  // 1. Make the inside transparent (or a tiny bit tinted for active days)
+                  // 2. Add the colored border
+                  stroke: orangeColors[activity.level], 
+                  // 3. Set the border thickness
+                  strokeWidth: 1.2, 
+                  // 4. Slightly round the corners (optional, set to 0 for perfectly sharp boxes)
+                  rx: 1 
+                });
+              }}
+            />
+          </div>
         </div>
 
 

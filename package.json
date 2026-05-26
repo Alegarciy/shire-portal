@@ -15,6 +15,7 @@
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-github-calendar": "^5.0.6",
     "sql.js": "^1.14.1"
   },
   "devDependencies": {
