@@ -72,7 +72,7 @@ const App = () => {
     <div className="app">
       <Nav active={activeTab} onChange={setActiveTab} />
       <main>
-        {activeTab === "home" && <Home data={dbData} />}
+        {activeTab === "home" && <Home data={dbData} onGo={setActiveTab} />}
         {activeTab === "projects" && <Projects data={dbData} />}
         {activeTab === "contributors" && <Contributors data={dbData} />}
         {activeTab === "blog" && <Blog data={dbData} />}

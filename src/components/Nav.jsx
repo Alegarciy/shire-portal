@@ -8,7 +8,7 @@ const TABS = [
   { id: "blog",         label: "grimoire" },
 ];
 
-const Nav = ({ active, onChange, theme, onToggleTheme }) => {
+const Nav = ({ active, onChange, theme }) => {
   return (
     <header className="nav">
       <div className="container nav-inner">
@@ -32,16 +32,6 @@ const Nav = ({ active, onChange, theme, onToggleTheme }) => {
           ))}
         </nav>
 
-        <div className="nav-actions">
-          <button
-            className="icon-btn"
-            onClick={onToggleTheme}
-            aria-label="Toggle theme"
-            title={theme === "dark" ? "switch to light" : "switch to dark"}
-          >
-            {theme === "dark" ? "[ light ]" : "[ dark ]"}
-          </button>
-        </div>
       </div>
     </header>
   );

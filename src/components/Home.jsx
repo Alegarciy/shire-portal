@@ -19,11 +19,14 @@ const Hero = ({ onGo, showHills = true }) => {
           <h1 className="hero-title">the shire</h1>
 
           <p className="hero-sub">
-            a small portal for the projects we tend,
+            "Home is behind, the world ahead,
             <br />
-            the wizards who tend them,
+            and there are many paths to tread
             <br />
-            and the notes left along the way.
+            through shadows to the edge of night,
+            <br />
+            until the stars are all alight."
+            <br />
           </p>
 
           <div className="hero-cta">
