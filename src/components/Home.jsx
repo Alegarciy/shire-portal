@@ -37,15 +37,15 @@ const Hero = ({ onGo, showHills = true }) => {
       <style>{`
         .hero {
           position: relative;
-          min-height: 78vh;
+          min-height: 90vh;
           display: flex;
           align-items: center;
           overflow: hidden;
           padding: 64px 0 96px;
         }
         .hero-inner {
-          position: relative;
-          width: 100%;
+          /* position: relative;*/
+          /* width: 100%; */
         }
         .hero-text {
           position: relative;

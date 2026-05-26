@@ -1,8 +1,10 @@
 // ===== Blog.jsx — grimoire, minimal notion/obsidian feel =====
+import React from 'react';
 
 const Blog = ({ data }) => {
   const [open, setOpen] = React.useState(null);
   const posts = data.posts;
+
 
   if (open !== null) {
     const p = posts[open];
@@ -28,7 +30,7 @@ const Blog = ({ data }) => {
           <h1 className="grimoire-reader-title">{p.title}</h1>
 
           <div className="grimoire-reader-tags mono">
-            {p.tags.map(t => <span key={t}>#{t}</span>)}
+            {p.tags.split(',').map(t => <span key={t}>#{t}</span>)}
           </div>
 
           <div className="grimoire-reader-body">
@@ -167,7 +169,7 @@ const Blog = ({ data }) => {
                     <span className="dim">·</span>
                     <span>{p.readingTime}</span>
                     <span className="dim">·</span>
-                    {p.tags.map(t => <span key={t}>#{t}</span>)}
+                    {p.tags.split(',').map(t => <span key={t}>#{t}</span>)}
                   </div>
                 </div>
                 <div className="grimoire-row-arrow">→</div>

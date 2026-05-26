@@ -1,316 +1,317 @@
-
-// ===== Contributors.jsx — wizards, horizontal card showcase, minimal =====
+// ===== Contributors.jsx — wizards, ultra-minimal =====
 import React from 'react';
 
 const Contributors = ({ data }) => {
   const [active, setActive] = React.useState(0);
   const list = data.contributors;
-  const c = list[active];
+  const w = list[active];
 
   return (
-    <div className="page">
-      <div className="container" style={{ paddingTop: 56, paddingBottom: 32 }}>
-        <header style={{ marginBottom: 40 }}>
-          <div className="eyebrow">wizards</div>
-          <h1 style={{ marginTop: 16, fontSize: "clamp(40px, 5vw, 56px)", letterSpacing: "-0.03em" }}>
-            in residence
-          </h1>
-          <p style={{ marginTop: 16, color: "var(--ink-soft)", maxWidth: 520, fontSize: 14, lineHeight: 1.7 }}>
-            the contributors who keep the gardens. click a card to read about the wizard.
-          </p>
-        </header>
-      </div>
+    <>
+      <div className="page wizards-page">
+        <div className="container" style={{ paddingTop: 56, paddingBottom: 80, position: "relative" }}>
+          <header style={{ marginBottom: 48, position: "relative", zIndex: 1 }}>
+            <div className="eyebrow">wizards</div>
+            <h1 style={{ marginTop: 16, fontSize: "clamp(40px, 5vw, 56px)", letterSpacing: "-0.03em" }}>
+              in residence
+            </h1>
+          </header>
 
-      <div className="wizard-strip-wrap">
-        <div className="wizard-strip">
-          <div className="strip-spacer" />
-          {list.map((w, i) => (
-            <WizardCard
-              key={w.handle}
-              wizard={w}
-              active={active === i}
-              index={i}
-              onClick={() => setActive(i)}
-            />
-          ))}
-          <div className="strip-spacer" />
+          {/* Horizontal name strip — no cards, no boxes */}
+          <div className="wizard-strip-wrap" aria-label="wizards">
+            <div className="wizard-strip">
+              {list.map((wz, i) => (
+                <button
+                  key={wz.handle}
+                  className={"wizard-pill" + (active === i ? " active" : "")}
+                  onClick={() => setActive(i)}
+                >
+                  <span className="wizard-pill-name">{wz.name.split(" ")[0].toLowerCase()}</span>
+                  <span className="wizard-pill-handle mono">@{wz.handle.toLowerCase()}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Detail — plain text, no panel */}
+          <article key={w.handle} className="wizard-detail page">
+            <div className="wizard-detail-line mono">
+              <span className="dim">$</span>{" "}
+              <span>cat ./wizards/{w.handle.toLowerCase()}.md</span>
+            </div>
+
+            <h2 className="wizard-detail-name">{w.name}</h2>
+            <div className="wizard-detail-title">— {w.title}</div>
+
+            <p className="wizard-detail-bio">{w.bio}</p>
+
+            <dl className="wizard-detail-fields mono">
+              <div>
+                <dt>handle</dt>
+                <dd>@{w.handle}</dd>
+              </div>
+              <div>
+                <dt>location</dt>
+                <dd>{w.location}</dd>
+              </div>
+              <div>
+                <dt>commits</dt>
+                <dd>{w.commits}</dd>
+              </div>
+              <div>
+                <dt>repos</dt>
+                <dd>{w.repos}</dd>
+              </div>
+              <div>
+                <dt>tags</dt>
+                <dd>{w.badges.split(',').map(b => b.toLowerCase()).join(", ")}</dd>
+              </div>
+            </dl>
+
+            <a
+              href={`https://github.com/${w.handle}`}
+              target="_blank"
+              rel="noopener"
+              className="link"
+              style={{ marginTop: 8 }}
+            >
+              visit on github <span>→</span>
+            </a>
+          </article>
         </div>
-      </div>
 
-      <div className="container" style={{ paddingTop: 40, paddingBottom: 80 }}>
-        <WizardDetail wizard={c} />
-      </div>
 
-      <style>{`
-        .wizard-strip-wrap {
-          position: relative;
-          padding: 0 0 8px;
-        }
-        .wizard-strip {
-          display: flex;
-          gap: 12px;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          padding: 12px 0 24px;
-          scrollbar-width: thin;
-          scrollbar-color: var(--rule) transparent;
-        }
-        .wizard-strip::-webkit-scrollbar { height: 4px; }
-        .wizard-strip::-webkit-scrollbar-track { background: transparent; }
-        .wizard-strip::-webkit-scrollbar-thumb { background: var(--rule); }
-        .strip-spacer {
-          flex: 0 0 max(32px, calc((100vw - 1080px) / 2 + 32px));
-        }
-      `}</style>
-    </div>
+        <style>{`
+          .wizard-strip-wrap {
+            padding: 4px 0 24px;
+            margin: 0 -32px;
+            border-bottom: 1px solid var(--rule-soft);
+          }
+          @media (max-width: 720px) {
+            .wizard-strip-wrap { margin: 0 -20px; }
+          }
+          .wizard-strip {
+            display: flex;
+            gap: 4px;
+            overflow-x: auto;
+            padding: 8px 32px 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--rule) transparent;
+          }
+          @media (max-width: 720px) {
+            .wizard-strip { padding: 8px 20px 20px; }
+          }
+          .wizard-strip::-webkit-scrollbar { height: 3px; }
+          .wizard-strip::-webkit-scrollbar-track { background: transparent; }
+          .wizard-strip::-webkit-scrollbar-thumb { background: var(--rule); }
+
+          .wizard-pill {
+            appearance: none;
+            background: none;
+            border: 0;
+            padding: 8px 14px 8px 0;
+            margin-right: 8px;
+            font-family: inherit;
+            color: var(--ink-faint);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: color 180ms ease;
+            border-bottom: 1px solid transparent;
+          }
+          .wizard-pill:hover { color: var(--ink); }
+          .wizard-pill.active {
+            color: var(--ink);
+            border-bottom-color: var(--accent);
+          }
+          .wizard-pill-name {
+            font-size: 14px;
+          }
+          .wizard-pill-handle {
+            font-size: 11px;
+            color: var(--ink-faint);
+          }
+          .wizard-pill.active .wizard-pill-handle {
+            color: var(--ink-soft);
+          }
+
+          .wizard-detail {
+            margin-top: 56px;
+            max-width: 560px;
+          }
+          .wizard-detail-line {
+            font-size: 11px;
+            color: var(--ink-soft);
+            margin-bottom: 24px;
+          }
+          .wizard-detail-line .dim { color: var(--ink-faint); }
+          .wizard-detail-name {
+            font-size: clamp(36px, 4.5vw, 48px);
+            letter-spacing: -0.03em;
+            margin-bottom: 6px;
+          }
+          .wizard-detail-title {
+            color: var(--ink-soft);
+            font-size: 16px;
+            margin-bottom: 28px;
+          }
+          .wizard-detail-bio {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--ink);
+            margin-bottom: 36px;
+          }
+
+          /* Field list — plain key/value, no boxes */
+          .wizard-detail-fields {
+            font-size: 12px;
+            margin: 0 0 36px;
+            padding: 0;
+            display: grid;
+            gap: 6px;
+          }
+          .wizard-detail-fields > div {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+          }
+          .wizard-detail-fields dt {
+            color: var(--ink-faint);
+            margin: 0;
+          }
+          .wizard-detail-fields dd {
+            margin: 0;
+            color: var(--ink);
+          }
+        `}</style>
+      </div>
+    
+      <WizardHillBottom />
+    </>
   );
 };
 
-const WizardCard = ({ wizard, active, onClick, index }) => {
-  const w = wizard;
-  return (
-    <button
-      className={"wizard-card" + (active ? " active" : "")}
-      onClick={onClick}
+// Bottom-right hill + windmill — spans the viewport, drawn in with SVG paths
+const WizardHillBottom = () => (
+  <div className="wizard-corner-bottom" aria-hidden="true">
+    <svg
+      viewBox="0 0 800 560"
+      preserveAspectRatio="xMaxYMax slice"
+      fill="none"
     >
-      <div className="wizard-card-num mono">w_{String(index + 1).padStart(2, "0")}</div>
+      {/* A long rising hill — reaches the bottom-left edge, exits the right edge */}
+      <path
+        d="M 0 560 Q 140 460 280 380 Q 440 290 800 240"
+        className="wcb-hill"
+      />
 
-      <div className="wizard-mark">
-        <WizardGlyph seed={w.handle} active={active} />
-      </div>
+      {/* Windmill #2 — MEDIUM, middle of the slope */}
+      <g className="wcb-windmill wcb-w2">
+        <line x1="406" y1="325" x2="410" y2="170" className="wcb-stroke" />
+        <g className="wcb-rotor" style={{ transformOrigin: "410px 170px" }}>
+          <line x1="410" y1="170" x2="411" y2="128" className="wcb-blade" />
+          <line x1="410" y1="170" x2="446" y2="190" className="wcb-blade" />
+          <line x1="410" y1="170" x2="376" y2="196" className="wcb-blade" />
+        </g>
+      </g>
 
-      <div className="wizard-card-body">
-        <div className="wizard-name">{w.name}</div>
-        <div className="wizard-handle mono">@{w.handle}</div>
-        <div className="wizard-title">{w.title}</div>
-      </div>
-
-      <div className="wizard-card-foot mono">
-        <span>{w.commits} commits</span>
-        <span className="dim">·</span>
-        <span>{w.repos} repos</span>
-      </div>
-
-      <style>{`
-        .wizard-card {
-          flex: 0 0 280px;
-          padding: 20px;
-          background: var(--card);
-          border: 1px solid var(--rule);
-          text-align: left;
-          font-family: inherit;
-          color: inherit;
-          cursor: pointer;
-          scroll-snap-align: start;
-          transition: border-color 220ms ease, transform 220ms ease;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          appearance: none;
-        }
-        .wizard-card:hover {
-          border-color: var(--ink-faint);
-        }
-        .wizard-card.active {
-          border-color: var(--accent);
-        }
-        .wizard-card-num {
-          font-size: 10px;
-          color: var(--ink-faint);
-          letter-spacing: 0;
-        }
-        .wizard-mark {
-          width: 56px;
-          height: 56px;
-          display: grid;
-          place-items: center;
-          border: 1px solid var(--rule);
-        }
-        .wizard-name {
-          font-size: 16px;
-          font-weight: 500;
-          color: var(--ink);
-          margin-bottom: 4px;
-        }
-        .wizard-handle {
-          font-size: 11px;
-          color: var(--ink-faint);
-          margin-bottom: 8px;
-        }
-        .wizard-title {
-          font-size: 12px;
-          color: var(--ink-soft);
-          line-height: 1.5;
-        }
-        .wizard-card-foot {
-          display: flex;
-          gap: 8px;
-          font-size: 11px;
-          color: var(--ink-soft);
-          padding-top: 14px;
-          border-top: 1px dashed var(--rule);
-          margin-top: auto;
-        }
-        .wizard-card-foot .dim { color: var(--ink-faint); }
-      `}</style>
-    </button>
-  );
-};
-
-// Tiny line glyph — variant per wizard. No fills, no gradients.
-const WizardGlyph = ({ seed, active }) => {
-  const hash = React.useMemo(() => {
-    let h = 0;
-    for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) | 0;
-    return Math.abs(h);
-  }, [seed]);
-  const v = hash % 5;
-  const color = active ? "var(--accent)" : "var(--ink)";
-
-  const stroke = { stroke: color, strokeWidth: 1.2, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" };
-
-  if (v === 0) {
-    return (
-      <svg width="28" height="28" viewBox="0 0 28 28">
-        <circle cx="14" cy="14" r="9" {...stroke} />
-        <line x1="14" y1="5" x2="14" y2="23" {...stroke} />
-      </svg>
-    );
-  }
-  if (v === 1) {
-    return (
-      <svg width="28" height="28" viewBox="0 0 28 28">
-        <polygon points="14,4 24,22 4,22" {...stroke} />
-      </svg>
-    );
-  }
-  if (v === 2) {
-    return (
-      <svg width="28" height="28" viewBox="0 0 28 28">
-        <rect x="6" y="6" width="16" height="16" {...stroke} />
-        <line x1="6" y1="6" x2="22" y2="22" {...stroke} />
-      </svg>
-    );
-  }
-  if (v === 3) {
-    return (
-      <svg width="28" height="28" viewBox="0 0 28 28">
-        <polygon points="14,4 23,14 14,24 5,14" {...stroke} />
-      </svg>
-    );
-  }
-  return (
-    <svg width="28" height="28" viewBox="0 0 28 28">
-      <path d="M 4 14 Q 14 4 24 14 Q 14 24 4 14 Z" {...stroke} />
+      {/* Windmill #3 — SMALLEST, near the right edge */}
+      <g className="wcb-windmill wcb-w3">
+        <line x1="632" y1="268" x2="636" y2="154" className="wcb-stroke wcb-tower-sm" />
+        <g className="wcb-rotor wcb-rotor-fast" style={{ transformOrigin: "636px 154px" }}>
+          <line x1="636" y1="154" x2="637" y2="126" className="wcb-blade wcb-blade-sm" />
+          <line x1="636" y1="154" x2="662" y2="168" className="wcb-blade wcb-blade-sm" />
+          <line x1="636" y1="154" x2="612" y2="174" className="wcb-blade wcb-blade-sm" />
+        </g>
+      </g>
     </svg>
-  );
-};
 
-const WizardDetail = ({ wizard }) => {
-  const w = wizard;
+    <style>{`
+      .wizard-corner-bottom {
+        position: fixed; 
+        bottom: -80px; 
+        right: -80px;
+        width: clamp(800px, 95vw, 1500px);
+        height: clamp(560px, 75vw, 1000px);
+        pointer-events: none;
+        z-index: 0; 
+        --field: #4a7a3a;
+      }
+      [data-theme="dark"] .wizard-corner-bottom {
+        --field: #7fb066;
+      }
+      .wizard-corner-bottom svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      @media (max-width: 960px) {
+        .wizard-corner-bottom { display: none; }
+      }
+      
+      .wcb-hill {
+        stroke: var(--field);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        stroke-dasharray: 1400;
+        stroke-dashoffset: 1400;
+        animation: wcbDraw 2.2s cubic-bezier(0.4, 0, 0.2, 1) 600ms forwards;
+      }
 
-  return (
-    <div key={w.handle} className="wizard-detail page">
-      <div className="wizard-detail-meta mono">
-        <span>id:</span>
-        <span>@{w.handle}</span>
-        <span className="dim">·</span>
-        <span>location:</span>
-        <span>{w.location}</span>
-      </div>
+      /* Base stroke settings for towers and blades */
+      .wcb-stroke, .wcb-blade {
+        stroke: var(--field);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        fill: none;
+        /* INCREASED dasharray to 300 to fully cover lines before they draw! */
+        stroke-dasharray: 300;
+        stroke-dashoffset: 300;
+        animation: wcbDraw 1.2s ease-out forwards;
+      }
 
-      <h2 className="wizard-detail-name">{w.name}</h2>
-      <div className="wizard-detail-title">— {w.title}</div>
+      /* Hub styling so it fades in smoothly as the blades draw */
+      .wcb-hub {
+        fill: var(--field);
+        opacity: 0;
+        animation: wcbFade 0.6s ease-out forwards;
+      }
+      
+      /* Specific widths */
+      .wcb-tower-lg, .wcb-blade-lg { stroke-width: 2; }
+      .wcb-tower-sm, .wcb-blade-sm { stroke-width: 1.2; }
 
-      <p className="wizard-detail-bio">{w.bio}</p>
+      /* Staggered drawing delays — linked up the tower, blades, and hub */
+      .wcb-w1 .wcb-stroke, .wcb-w1 .wcb-blade, .wcb-w1 .wcb-hub { animation-delay: 1800ms; }
+      .wcb-w2 .wcb-stroke, .wcb-w2 .wcb-blade, .wcb-w2 .wcb-hub { animation-delay: 2200ms; }
+      .wcb-w3 .wcb-stroke, .wcb-w3 .wcb-blade, .wcb-w3 .wcb-hub { animation-delay: 2600ms; }
 
-      <div className="wizard-detail-badges mono">
-        {w.badges.split(',').map(b => (
-          <span key={b} className="badge">[ {b} ]</span>
-        ))}
-      </div>
+      /* Rotation settings */
+      .wcb-rotor {
+        animation: wcbSpin 60s linear infinite;
+      }
+      .wcb-rotor-slow { animation-duration: 55s; }
+      .wcb-rotor-fast { animation-duration: 54s; }
 
-      <div className="wizard-stats">
-        <div className="wizard-stat">
-          <div className="wizard-stat-val">{w.commits}</div>
-          <div className="wizard-stat-lbl mono">commits</div>
-        </div>
-        <div className="wizard-stat">
-          <div className="wizard-stat-val">{w.repos}</div>
-          <div className="wizard-stat-lbl mono">repos</div>
-        </div>
-      </div>
+      /* Keyframes */
+      @keyframes wcbDraw { to { stroke-dashoffset: 0; } }
+      @keyframes wcbFade { to { opacity: 1; } }
+      @keyframes wcbSpin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+      }
 
-      <a
-        href={`https://github.com/${w.handle}`}
-        target="_blank"
-        rel="noopener"
-        className="link"
-        style={{ marginTop: 32 }}
-      >
-        visit on github <span>→</span>
-      </a>
-
-      <style>{`
-        .wizard-detail {
-          max-width: 640px;
-          padding-top: 8px;
-        }
-        .wizard-detail-meta {
-          display: flex;
-          gap: 8px;
-          font-size: 11px;
-          color: var(--ink-soft);
-          margin-bottom: 24px;
-          flex-wrap: wrap;
-        }
-        .wizard-detail-meta .dim { color: var(--ink-faint); }
-        .wizard-detail-name {
-          font-size: clamp(36px, 4.5vw, 48px);
-          letter-spacing: -0.03em;
-          margin-bottom: 6px;
-        }
-        .wizard-detail-title {
-          color: var(--ink-soft);
-          font-size: 16px;
-          margin-bottom: 24px;
-        }
-        .wizard-detail-bio {
-          font-size: 15px;
-          line-height: 1.7;
-          color: var(--ink);
-          max-width: 540px;
-          margin-bottom: 24px;
-        }
-        .wizard-detail-badges {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-          margin-bottom: 32px;
-          font-size: 11px;
-          color: var(--ink-soft);
-        }
-        .wizard-stats {
-          display: flex;
-          gap: 40px;
-          padding-top: 20px;
-          border-top: 1px solid var(--rule-soft);
-        }
-        .wizard-stat-val {
-          font-size: 32px;
-          font-weight: 500;
-          letter-spacing: -0.03em;
-          font-variant-numeric: tabular-nums;
-        }
-        .wizard-stat-lbl {
-          font-size: 11px;
-          color: var(--ink-faint);
-          margin-top: 2px;
-        }
-      `}</style>
-    </div>
-  );
-};
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        .wcb-rotor, .wcb-rotor-slow, .wcb-rotor-fast { animation: none; }
+      }
+    `}</style>
+  </div>
+);
 
 export default Contributors;
-
