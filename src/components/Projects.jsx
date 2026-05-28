@@ -110,7 +110,7 @@ const QuestRow = ({ project, index }) => {
   const p = project;
   return (
     <li className="quest-row" style={{ animationDelay: `${index * 40}ms` }}>
-      <a href="#" className="quest-link" onClick={e => e.preventDefault()}>
+      <a href={p.link || '#'} className="quest-link" target="_blank" rel="noreferrer noopener">
         <div className="quest-status">
           <span className={"dot dot-" + p.status.toLowerCase()} />
         </div>
@@ -124,12 +124,12 @@ const QuestRow = ({ project, index }) => {
           </div>
           <p className="quest-desc">{p.description}</p>
           <div className="quest-meta">
-            <span className="mono">@{p.author}</span>
             <span className="dim">·</span>
-            <span className="mono">★ {p.stars}</span>
+            <span className="mono">{p.name}</span>
             <span className="dim">·</span>
-            <span className="mono">⑂ {p.forks}</span>
-            <span className="dim">·</span>
+            <span className="mono">@{p.handle}</span>
+            {/* <span className="mono">⑂ {p.forks}</span> */}
+            {/* <span className="dim">·</span> */}
             <span className="mono dim">{p.tags ? p.tags.split(',').join(" · ") : ''}</span>
           </div>
         </div>

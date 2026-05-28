@@ -34,7 +34,7 @@ const App = () => {
 
         // Execute raw SQL statements natively inside the client window browser
         const contributorsResult = db.exec("SELECT * FROM contributors");
-        const projectsResult = db.exec("SELECT * FROM projects");
+        const projectsResult = db.exec("SELECT * FROM projects p LEFT JOIN contributors c ON c.id = p.author_id");
         const postsResult = db.exec("SELECT * FROM posts");
 
         const parseRows = (result) => {
